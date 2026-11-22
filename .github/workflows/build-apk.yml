@@ -1,0 +1,44 @@
+name: Build SoundShelf APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Run Unit & Robolectric Tests
+        run: ./gradlew :app:testDebugUnitTest
+
+      - name: Build Debug APK
+        run: ./gradlew :app:assembleDebug
+
+      - name: Rename & Stage Artifact
+        run: |
+          mkdir -p artifacts
+          cp app/build/outputs/apk/debug/app-debug.apk artifacts/SoundShelf-Connected-debug.apk
+
+      - name: Upload SoundShelf APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SoundShelf-debug-apk
+          path: artifacts/SoundShelf-Connected-debug.apk
+          retention-days: 14

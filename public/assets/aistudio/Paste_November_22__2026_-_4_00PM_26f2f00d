@@ -1,0 +1,1728 @@
+# SOUNDSHELF
+## A Premium Android Music Player, Streaming Discovery Platform & Local Music Library
+
+Build a complete, production-quality native Android music application named **SoundShelf**, using Kotlin and Jetpack Compose.
+
+SoundShelf is an advanced music player combining:
+
+1. Local music playback and library management.
+2. Online music discovery and supported streaming integrations.
+3. Music search across multiple compatible providers.
+4. Playlist, album and artist management.
+5. Lyrics and music information.
+6. Audio enhancements and playback customisation.
+7. A legitimate music-download discovery system.
+8. An extensive but carefully curated visual theme system.
+
+The application should take inspiration from the functionality and general product direction of InnerTune, OuterTune, ViMusic and similar Android music players.
+
+However, SoundShelf must have its own identity, architecture, interface, implementation and product design.
+
+Do not copy their branding, logos, proprietary artwork or copyrighted assets.
+
+The application must be a genuinely excellent everyday music player, not simply a streaming API frontend.
+
+**The local music experience must remain fully functional even when every online service is unavailable.**
+
+---
+
+# 1. CORE PRODUCT PHILOSOPHY
+
+SoundShelf should eliminate the unnecessary separation between listening to locally stored music and discovering music online.
+
+Users should be able to:
+
+- Listen to music stored on their devices.
+- Browse their music library.
+- Discover music through compatible online providers.
+- Search for artists, songs, albums and playlists.
+- Listen to supported streaming content.
+- Create playlists where the provider's terms permit.
+- Maintain a playback queue.
+- Read synchronized lyrics where available and licensed.
+- Inspect audio information.
+- Manage music metadata.
+- Find legitimate downloadable versions of songs.
+- Customise the entire listening experience.
+
+The application must prioritise:
+
+- Excellent audio playback.
+- Fast search.
+- Reliable background playback.
+- Beautiful visual design.
+- User freedom.
+- Local music management.
+- Privacy.
+- Performance.
+- Minimal resource consumption.
+
+Avoid turning SoundShelf into a complicated social network or music subscription platform.
+
+There must be no mandatory SoundShelf account.
+
+There must be no subscription requirement for using the local music player.
+
+Do not insert advertisements into SoundShelf.
+
+Advertising or playback restrictions imposed by an external streaming provider must not be bypassed or misrepresented.
+
+---
+
+# 2. PRODUCT ARCHITECTURE — LOCAL AND ONLINE MUSIC
+
+SoundShelf must support multiple music sources through a modular provider architecture.
+
+These sources must not be hardcoded into the playback screen.
+
+Create a common internal representation for tracks, artists, albums and playlists, while retaining the original provider identity and playback restrictions.
+
+## Source A: Local Music Library
+
+This is the foundation of SoundShelf.
+
+It must work completely offline and without any account.
+
+Users can scan and play locally stored audio files.
+
+## Source B: Official Online Music Providers
+
+Provide integrations with music services that explicitly permit third-party music discovery and playback.
+
+Initial candidates:
+
+- Audius.
+- Jamendo.
+- Other compatible, properly licensed music providers.
+
+Each source must have its own provider adapter.
+
+Respect provider attribution requirements, rate limits, content licences and download restrictions.
+
+## Source C: YouTube Music-Compatible Experimental Provider
+
+Study the architecture and capabilities demonstrated by InnerTune, OuterTune and ViMusic.
+
+Provide an isolated provider interface intended for evaluating YouTube Music compatibility.
+
+Important implementation conditions:
+
+- YouTube Music does not provide a public API granting unrestricted third-party audio streaming.
+- Do not describe unofficial integrations as official Google integrations.
+- Do not request or store Google passwords.
+- Do not collect Google session cookies or credentials through unofficial login forms.
+- Do not bypass DRM, account restrictions, paid entitlements or access controls.
+- Do not remove, suppress or skip provider-served advertisements.
+- Do not extract audio from YouTube videos in ways prohibited by applicable policies.
+- Do not implement unauthorised offline downloading.
+- Do not promise background playback when the source's permitted playback mechanism does not allow it.
+
+A community-maintained compatibility adapter may be evaluated separately, but it must undergo licensing, technical and policy review before being enabled in a public release.
+
+If compliant playback cannot be provided, offer opening the selected content in the official YouTube Music application.
+
+Do not let experimental provider failures affect local playback or other providers.
+
+## Source D: Spotify
+
+Offer an optional Spotify connection or external-app handoff where supported by Spotify's current developer policies.
+
+Possible permitted functionality includes:
+
+- Linking to Spotify content.
+- Opening Spotify tracks, playlists, albums and artist pages.
+- Displaying authorised metadata.
+- Controlling playback through supported official mechanisms where eligible.
+- Displaying account connection status where permitted.
+
+Important restrictions:
+
+Spotify's platform does not grant unrestricted rights to stream Spotify's catalogue inside an independent application.
+
+Spotify content must not be combined with streams from other providers where prohibited.
+
+Keep Spotify as a separate integration and do not include its audio in SoundShelf's cross-provider playback queue.
+
+For unsupported playback functionality, open the official Spotify application.
+
+Do not claim to offer Spotify Premium features to Free users.
+
+## Source E: Licensed Download Sources
+
+Provide discovery and purchase/download links for music that users can legitimately obtain.
+
+Potential sources include:
+- Artist-authorised download pages.
+- Audius downloads where explicitly permitted.
+- Jamendo downloads where licensed.
+- SoundCloud creator-enabled downloads.
+- Qobuz purchase pages.
+- Other authorised music stores.
+
+Do not assume a provider permits unrestricted file downloads.
+
+Download functionality must be determined by the source's actual licensing and API capabilities.
+
+---
+
+# 3. HOME SCREEN — MUSIC DISCOVERY DASHBOARD
+
+Build an attractive, personalised music home screen.
+
+The home screen should immediately give users something useful to listen to.
+
+Include the following sections:
+
+### Quick Access
+
+- Continue Listening.
+- Recently Played.
+- Favourite Tracks.
+- Recently Added.
+- My Playlists.
+- Downloaded Music.
+
+### Music Discovery
+
+Where compatible online providers are enabled:
+
+- Trending Music.
+- New Releases.
+- Popular Tracks.
+- Recommended Artists.
+- Popular Albums.
+- Recently Discovered.
+- Genres.
+- Moods.
+- Provider-specific charts.
+
+Do not fabricate trending rankings or recommendations.
+
+Show the source of online discovery information.
+
+### Local Music Highlights
+
+Include:
+
+- Recently added albums.
+- Frequently played songs.
+- Most played artists.
+- Recently created playlists.
+- Large music collections.
+- Unorganised tracks.
+- Missing artwork.
+
+### Personalisation
+
+Allow users to customise:
+
+- Home screen sections.
+- Section ordering.
+- Visible recommendations.
+- Recently played visibility.
+- Local and online content separation.
+
+The home screen should be useful even when disconnected from the internet.
+
+When online discovery is unavailable, retain all local music sections.
+
+---
+
+# 4. LOCAL MUSIC LIBRARY
+
+The local music library is a core feature.
+
+Use Android's supported media-storage mechanisms to discover and access locally stored audio.
+
+Support MediaStore and Android's Storage Access Framework.
+
+Avoid requesting unnecessary unrestricted storage permissions.
+
+## 4.1 Supported Audio Formats
+
+Provide playback support according to actual Android decoder and Media3 capabilities.
+
+Initial format targets:
+
+- MP3.
+- FLAC.
+- WAV.
+- AAC.
+- M4A.
+- OGG Vorbis.
+- Opus.
+- ALAC.
+- Other supported formats where feasible.
+
+Do not claim format support without successful playback testing.
+
+## 4.2 Music Library Scanning
+
+Implement:
+
+- Automatic library scanning.
+- Manual rescanning.
+- Folder-based browsing.
+- New-file detection.
+- Removed-file detection.
+- Duplicate-track identification.
+- Missing-file detection.
+- Album grouping.
+- Artist grouping.
+- Genre grouping.
+
+Allow users to exclude folders and directories from scanning.
+
+Do not repeatedly rescan the entire device unnecessarily.
+
+Use efficient incremental updates.
+
+## 4.3 Library Navigation
+
+Provide these categories:
+
+- All Songs.
+- Albums.
+- Artists.
+- Album Artists.
+- Genres.
+- Folders.
+- Playlists.
+- Recently Added.
+- Recently Played.
+- Most Played.
+- Favourites.
+
+Allow sorting by:
+
+- Title.
+- Artist.
+- Album.
+- Duration.
+- Date Added.
+- Release Year.
+- File Size.
+- Play Count.
+
+Support alphabetical navigation for large collections.
+
+## 4.4 Track Information
+
+Display:
+
+- Track title.
+- Artist.
+- Album.
+- Album artist.
+- Genre.
+- Track number.
+- Disc number.
+- Release year.
+- Duration.
+- File size.
+- Audio format.
+- Bitrate where available.
+- Sample rate where available.
+- Bit depth where available.
+- Channel count.
+
+Distinguish between actual file properties and metadata reported by an external provider.
+
+---
+
+# 5. MUSIC PLAYBACK ENGINE
+
+The playback engine is the most important technical component.
+
+Use AndroidX Media3 and ExoPlayer as the primary playback foundation.
+
+Implement a properly separated playback service.
+
+Use MediaSessionService or MediaLibraryService as appropriate.
+
+The player must continue working when the application is in the background or the screen is locked.
+
+## Core Playback Controls
+
+- Play.
+- Pause.
+- Next.
+- Previous.
+- Seek.
+- Seek backward.
+- Seek forward.
+- Shuffle.
+- Repeat one.
+- Repeat all.
+- Repeat off.
+- Playback speed.
+- Pitch adjustment where supported.
+- Queue management.
+- Remove from queue.
+- Move queue items.
+- Play next.
+- Add to queue.
+
+## Playback Modes
+
+- Normal playback.
+- Shuffle.
+- Repeat current track.
+- Repeat playlist.
+- Sequential album playback.
+- Folder playback.
+
+## Audio Focus
+
+Handle Android audio focus correctly.
+
+Support:
+
+- Headphone removal.
+- Bluetooth disconnection.
+- Incoming call interruptions.
+- Audio focus loss.
+- Audio focus regain.
+- External playback controls.
+- Output device changes.
+
+Do not continue playback unexpectedly after major interruptions.
+
+## Advanced Playback
+
+Where technically supported:
+
+- Gapless playback.
+- Crossfade.
+- ReplayGain.
+- Volume normalisation.
+- Playback speed control.
+- Optional audio effects.
+- Equalizer.
+- Bass enhancement.
+- Audio balance.
+- Loudness control.
+
+Make advanced effects independently configurable.
+
+Do not pretend every Android device supports identical audio effects.
+
+## Playback Restoration
+
+Persist enough local playback state to restore:
+
+- Current track.
+- Current position.
+- Queue.
+- Shuffle state.
+- Repeat state.
+- Playback speed.
+- Selected source.
+
+Provide reliable playback resumption after application termination or device restart where Android permits it.
+
+---
+
+# 6. BACKGROUND PLAYBACK AND SYSTEM INTEGRATION
+
+Implement a proper Media3 playback service.
+
+Requirements:
+
+- Foreground media playback service.
+- MediaSession.
+- MediaController connection to the interface.
+- Persistent media notification.
+- Lock-screen controls.
+- Notification artwork.
+- Current track information.
+- Play/pause controls.
+- Next and previous controls.
+- Bluetooth headset controls.
+- Android media buttons.
+- Playback resumption.
+
+Handle Android foreground-service requirements and permissions correctly for supported Android versions.
+
+The playback notification must remain properly synchronised with the player.
+
+Do not tie audio playback directly to the lifetime of an Activity or composable.
+
+The UI must be allowed to close while music continues playing.
+
+Implement media-session state independently of the visible interface.
+
+---
+
+# 7. NOW PLAYING SCREEN
+
+The Now Playing screen should be one of SoundShelf's visual highlights.
+
+It should feel premium, atmospheric and personal without becoming visually cluttered.
+
+Include:
+
+- Album artwork.
+- Song title.
+- Artist.
+- Album information.
+- Playback progress.
+- Remaining duration.
+- Seek bar.
+- Play/pause.
+- Next and previous.
+- Shuffle.
+- Repeat.
+- Favourite.
+- Queue access.
+- Lyrics access.
+- Track information.
+- More options.
+
+### Artwork Presentation
+
+Support:
+
+- Full-bleed album artwork.
+- Background colour extraction.
+- Subtle gradients.
+- Artwork transitions.
+- Animated artwork presentation where appropriate.
+
+Do not unnecessarily process or animate large artwork.
+
+### Optional Visual Modes
+
+Allow users to select:
+
+- Minimal Player.
+- Full Artwork.
+- Compact Player.
+- Lyrics Focus.
+- AMOLED Player.
+- Animated Artwork.
+
+The Now Playing screen should adapt to the active theme.
+
+---
+
+# 8. QUEUE AND PLAYLIST SYSTEM
+
+Create a comprehensive playback queue.
+
+Users should be able to:
+
+- View upcoming tracks.
+- View previously played tracks.
+- Reorder queue items.
+- Remove queue items.
+- Add tracks to the queue.
+- Play a track next.
+- Clear the queue.
+- Save the current queue as a playlist.
+- Shuffle the queue.
+- Repeat the queue.
+
+Support persistent local playlists.
+
+## Unified Queue Rules
+
+Local tracks and compatible licensed streaming tracks may participate in one queue where their respective provider terms permit.
+
+Each queue entry must retain:
+
+- Source provider.
+- Provider track ID.
+- Local file URI where relevant.
+- Track metadata.
+- Playback reference.
+- Artwork reference.
+- Available capabilities.
+
+Some providers may not allow their content to be combined with third-party music.
+
+For these sources, preserve a separate playback context and launch the official application when necessary.
+
+Never pretend every provider supports every queue operation.
+
+## Playlist Management
+
+Implement:
+
+- Create playlist.
+- Rename playlist.
+- Delete playlist.
+- Add tracks.
+- Remove tracks.
+- Reorder tracks.
+- Duplicate playlists.
+- Favourite playlists.
+- Local playlist import.
+- Local playlist export.
+
+Support appropriate formats such as M3U and M3U8 where practical.
+
+Do not store unusable or expiring remote playback URLs as permanent playlist identifiers.
+
+Store stable provider references and retrieve fresh playback references according to provider rules.
+
+---
+
+# 9. SEARCH ENGINE
+
+Build a fast, powerful music search system.
+
+Search should be available throughout the application.
+
+## Search Categories
+
+- Songs.
+- Artists.
+- Albums.
+- Playlists.
+- Genres.
+- Local files.
+- Online catalogues.
+
+Provide search suggestions and recent searches.
+
+Support filtering by provider.
+
+## Local Search
+
+Search:
+
+- Track title.
+- Artist.
+- Album.
+- Album artist.
+- Genre.
+- File location.
+- Year.
+
+Support partial matches and tolerant search.
+
+## Online Search
+
+Send queries to eligible providers through their respective adapters.
+
+Do not combine metadata or content in ways that violate provider policies.
+
+Clearly label which service supplied each result.
+
+## Search Result Actions
+
+Depending on provider capability:
+
+- Play.
+- Add to playlist.
+- View artist.
+- View album.
+- Open externally.
+- Add to queue.
+- Find downloadable version.
+
+Do not display unavailable actions as functioning buttons.
+
+---
+
+# 10. MUSIC DISCOVERY AND PROVIDER ADAPTERS
+
+Implement a modular provider architecture.
+
+Each provider must expose a defined capability interface.
+
+Possible capabilities include:
+
+- Search.
+- Artist details.
+- Album details.
+- Track metadata.
+- Playlist browsing.
+- Stream playback.
+- Lyrics.
+- Recommendations.
+- Download availability.
+- Account connection.
+- Playlist management.
+
+A provider must explicitly declare which capabilities it supports.
+
+Do not assume every provider supports the same functionality.
+
+## Audius
+
+Evaluate integration with the official Audius developer API.
+
+Potential capabilities include:
+
+- Track search.
+- Artist profiles.
+- Album and playlist discovery.
+- Track metadata.
+- Authorised streaming.
+- Charts and discovery.
+
+Most read-only API endpoints are available without user authentication, while higher rate limits or write operations may require authentication and API credentials.
+
+Follow current developer documentation and API limitations.
+
+Reference:
+
+https://docs.audius.co/
+
+## Jamendo
+
+Evaluate official Jamendo API integration.
+
+Potential features include:
+
+- Track search.
+- Artists.
+- Albums.
+- Playlists.
+- Metadata.
+- Licensed streaming.
+- Creator-authorised downloading.
+
+Respect Creative Commons licences, attribution requirements, commercial restrictions and download permissions.
+
+Check each track's actual download availability.
+
+Reference:
+
+https://developer.jamendo.com/
+
+## YouTube Music-Compatible Adapter
+
+Treat this as an optional experimental integration.
+
+Study the general architecture of:
+
+- InnerTune.
+- OuterTune.
+- ViMusic.
+- Other maintained and legally compatible community projects.
+
+Do not blindly copy code.
+
+Audit all external project licences before considering code reuse.
+
+Do not request Google passwords.
+
+Do not collect or scrape user cookies.
+
+Do not bypass DRM, advertisements, access controls, Premium entitlements or content restrictions.
+
+Do not introduce unauthorised audio extraction or offline downloads.
+
+Where a compliant integration cannot provide a requested operation, clearly communicate the limitation and open the official YouTube Music application instead.
+
+The entire SoundShelf application must remain usable if this experimental module stops working.
+
+## Spotify Integration
+
+Provide an optional Spotify provider or external-app integration according to permitted Spotify functionality.
+
+Possible functionality:
+- Content links.
+- Track metadata where authorised.
+- Artist and album references.
+- Playlist metadata where permitted.
+- Opening tracks in Spotify.
+- Supported playback-control handoff.
+
+Do not build an unrestricted Spotify audio-streaming client.
+
+Do not combine Spotify streams with content from other providers where prohibited.
+
+Respect current Premium requirements and developer-policy restrictions.
+
+Reference:
+
+https://developer.spotify.com/documentation/
+
+## Provider Independence
+
+Each provider must be independently enableable and disableable.
+
+A failed provider must not:
+- Crash SoundShelf.
+- Corrupt the playback queue.
+- Break local music.
+- Prevent other providers from working.
+- Reset playlists.
+- Destroy playback history.
+
+Provide provider status and useful error messages.
+
+---
+
+# 11. ACCOUNT CONNECTION AND AUTHENTICATION
+
+Account connection must be optional.
+
+Users must never need an online account to play local music.
+
+Provide a dedicated Connected Services screen.
+
+For each provider, show:
+
+- Provider name.
+- Connection status.
+- Available capabilities.
+- Authentication method.
+- Disconnect option.
+- Information about provider restrictions.
+
+Use officially supported OAuth flows where available.
+
+Prefer Authorization Code with PKCE for public Android clients where supported by the provider.
+
+Never ask users to type their Google or Spotify account passwords into SoundShelf.
+
+Never store third-party passwords.
+
+Do not collect browser cookies or authentication session tokens through unofficial means.
+
+Store authorised tokens securely using Android Keystore-backed encryption.
+
+Support token expiry, refresh where permitted, revocation and disconnection.
+
+Do not store unnecessary personal account information.
+
+Clearly distinguish:
+- Connected account.
+- External application installed.
+- Unauthenticated browsing.
+- Experimental provider.
+- Unsupported playback.
+
+---
+
+# 12. LYRICS STUDIO
+
+Lyrics are an important part of the listening experience.
+
+Implement a dedicated Lyrics interface.
+
+Support:
+
+- Embedded lyrics.
+- LRC files.
+- Synchronized lyrics.
+- Plain-text lyrics where available.
+- Timestamped lyric display.
+- Current-line highlighting.
+- Automatic scrolling.
+- Manual scrolling.
+- Lyric timing offset.
+- Translation display where legally available.
+
+Search for lyrics only through providers or sources whose terms permit the intended use.
+
+Do not scrape or reproduce restricted lyrics from arbitrary websites.
+
+Allow users to import their own local lyric files.
+
+Support editing local LRC timing where appropriate.
+
+## Lyrics Editing
+
+Allow users to:
+
+- Load an LRC file.
+- Adjust timing.
+- Change individual timestamps.
+- Save a modified local LRC file.
+- Associate it with a local track.
+
+---
+
+# 13. AUDIO INFORMATION AND QUALITY INSPECTOR
+
+Create an Audio Information screen for every track.
+
+For local files, display actual technical properties.
+
+Include:
+
+- File format.
+- Codec.
+- Bitrate.
+- Variable or constant bitrate where detectable.
+- Sample rate.
+- Bit depth where detectable.
+- Channel count.
+- Duration.
+- File size.
+- Encoder information where available.
+- Metadata tags.
+
+For online streams, display only information that the provider actually makes available.
+
+Distinguish between:
+- Original file quality.
+- Provider-reported quality.
+- Streaming quality.
+- Estimated quality.
+- Unknown quality.
+
+Never invent technical measurements.
+
+Never claim a low-quality MP3 is lossless because it has been converted to FLAC.
+
+---
+
+# 14. DOWNLOAD DISCOVERY — FIND A LEGITIMATE COPY
+
+Create a dedicated module called **Download Finder**.
+
+Its purpose is to help users locate legitimate downloadable versions of music they already enjoy.
+
+This must not be a YouTube-to-MP3 converter, unauthorised stream recorder or copyright-infringing music scraper.
+
+## 14.1 Song Identification
+
+Allow users to search for a track using:
+
+- Song title.
+- Artist.
+- Album.
+- Release year.
+- Version.
+- ISRC where available.
+
+Identify potentially different versions:
+
+- Original release.
+- Remaster.
+- Radio edit.
+- Extended edition.
+- Remix.
+- Live recording.
+- Instrumental version.
+- Clean version.
+- Explicit version.
+
+Avoid matching tracks solely by title.
+
+## 14.2 Legitimate Source Discovery
+
+Search or link to sources that explicitly permit purchase or download.
+
+Potential sources:
+
+- Artist-authorised websites.
+- Audius authorised downloads.
+- Jamendo authorised downloads.
+- SoundCloud creator-enabled downloads.
+- Qobuz purchased downloads.
+- Other permitted digital music stores.
+
+The availability of each source must be checked individually.
+
+## 14.3 Available Formats
+
+Where genuinely offered, display:
+
+- MP3.
+- FLAC.
+- WAV.
+- ALAC.
+- AAC.
+- Other supported formats.
+
+Display known attributes:
+
+- Bitrate.
+- Sample rate.
+- Bit depth.
+- File size.
+- Lossless or lossy status.
+- Licence.
+- Price if provided by the source.
+
+Never invent a format or quality level.
+
+## 14.4 Download Handling
+
+Only download files when the provider or creator explicitly permits downloading.
+
+Do not:
+- Rip online streams.
+- Extract audio from restricted video sources.
+- Circumvent DRM.
+- Bypass purchase requirements.
+- Scrape unauthorised music mirrors.
+- Convert restricted streaming content into permanent files.
+
+If direct downloading is not supported, open the official purchase or download page.
+
+After a permitted file download:
+
+- Allow importing it into the local library.
+- Inspect its metadata.
+- Verify the actual format.
+- Calculate a checksum if appropriate.
+- Update the library index.
+
+## 14.5 Replace With Higher Quality
+
+Add an optional feature called **Find a Better Version**.
+
+For a local track:
+
+1. Inspect its current metadata.
+2. Identify the likely recording.
+3. Search authorised downloadable sources.
+4. Compare matching versions.
+5. Display available format and quality information.
+6. Allow the user to purchase or download a permitted copy.
+7. Import the new file.
+8. Offer to replace the old library reference.
+
+Do not delete the original automatically.
+
+Preserve playlist associations and playback history when a replacement is confirmed.
+
+---
+
+# 15. LOCAL MUSIC METADATA EDITOR
+
+Allow users to inspect and edit local audio tags.
+
+Support available metadata fields such as:
+
+- Title.
+- Artist.
+- Album.
+- Album artist.
+- Genre.
+- Release year.
+- Track number.
+- Disc number.
+- Composer.
+- Copyright.
+- Comment.
+- Lyrics.
+- Artwork.
+
+Support appropriate tag formats such as ID3 and Vorbis comments where the underlying file format permits.
+
+Preserve audio data during metadata changes.
+
+Do not re-encode an audio file simply to edit its title or album artwork.
+
+Provide batch tag editing.
+
+Support album artwork replacement.
+
+Always preserve an original copy or provide a safe undo mechanism.
+
+---
+
+# 16. PLAYLIST INTELLIGENCE
+
+Provide a flexible playlist system.
+
+### Static Playlists
+
+Users manually choose and reorder tracks.
+
+### Smart Playlists
+
+Generate playlists using locally evaluated rules.
+
+Examples:
+
+- Most played songs.
+- Recently added songs.
+- Songs from a selected decade.
+- Favourite artists.
+- Tracks above a particular rating.
+- High-resolution local audio.
+- Recently unplayed songs.
+- Short songs.
+- Long songs.
+
+Allow multiple conditions.
+
+### Automatic Mixes
+
+Where supported, create local mixes based on:
+- Playback history.
+- Favourite artists.
+- Genres.
+- User-selected moods.
+- Frequently played albums.
+
+Do not claim to know a user's taste without sufficient information.
+
+Let users disable listening-history tracking and clear it at any time.
+
+---
+
+# 17. VISUAL DESIGN AND BRAND IDENTITY
+
+SoundShelf should look like a premium standalone Android application.
+
+Do not create a generic clone of Spotify, YouTube Music, InnerTune or OuterTune.
+
+Develop an original interface with its own visual identity.
+
+The application should feel polished, tactile, modern and comfortable for long listening sessions.
+
+## Main Visual Direction
+
+Use a combination of:
+- High-quality album artwork.
+- Expressive typography.
+- Restrained gradients.
+- Clean music cards.
+- Smooth transitions.
+- Dark surfaces.
+- Attractive Now Playing layouts.
+- Clearly organised navigation.
+
+Avoid:
+- Excessive rounded cards.
+- Cluttered interfaces.
+- Tiny controls.
+- Overly bright backgrounds.
+- Excessive animations.
+- Unnecessary information density.
+
+## Theme Library
+
+Provide approximately 10–15 complete visual identities.
+
+Quality matters more than quantity.
+
+Suggested themes:
+
+1. Midnight Studio.
+2. Pure AMOLED.
+3. Liquid Glass.
+4. Glassmorphism.
+5. Editorial.
+6. Retro Vinyl.
+7. Cyberpunk.
+8. Synthwave.
+9. Minimal White.
+10. Warm Analog.
+11. Ocean.
+12. Neumorphism.
+13. Modern Broadcast.
+14. Pastel Sound.
+15. Monochrome.
+
+Each theme must have its own visual character.
+
+Themes may control:
+- Backgrounds.
+- Surfaces.
+- Typography.
+- Player layout.
+- Navigation.
+- Artwork presentation.
+- Button geometry.
+- Accent treatments.
+- Animation styles.
+
+Do not simply replace the accent colour.
+
+## Theme Onboarding
+
+On first launch, give users three choices:
+
+1. Explore Themes.
+2. Create My Own.
+3. Skip for Now.
+
+Skipping must immediately open the application using a beautiful default theme.
+
+The custom theme editor should allow:
+- Accent colour.
+- Background colour.
+- Typography.
+- Button appearance.
+- Card appearance.
+- Artwork presentation.
+- Navigation style.
+- Animation intensity.
+- Interface density.
+
+Save all preferences locally.
+
+Allow theme changes at any time.
+
+---
+
+# 18. NOW PLAYING VISUAL EXPERIENCES
+
+Provide multiple complete player layouts.
+
+### Classic Player
+
+Album artwork, title, artist, progress and playback controls.
+
+### Minimal Player
+
+Large artwork, minimal controls and restrained typography.
+
+### Artwork Player
+
+Full-screen artwork with extracted background colours.
+
+### Lyrics Player
+
+Synchronized lyrics dominate the screen.
+
+### AMOLED Player
+
+Pure black background and high-contrast controls.
+
+All layouts must be accessible from the player settings.
+
+Ensure playback transitions do not produce unnecessary visual stutters.
+
+---
+
+# 19. SOUND AND HAPTIC FEEDBACK
+
+Provide optional interaction sounds and haptics.
+
+Where appropriate:
+
+- Light haptics for queue changes.
+- Feedback for playlist actions.
+- Gentle confirmation for favourite actions.
+
+Do not generate unnecessary sounds during normal music playback.
+
+Allow complete control over haptics.
+
+Do not interrupt the music with interface audio effects.
+
+---
+
+# 20. PRIVACY AND OFFLINE ARCHITECTURE
+
+SoundShelf should be privacy-conscious and transparent about connectivity.
+
+There must be no:
+- Advertisements inserted by SoundShelf.
+- Analytics SDKs.
+- Advertising SDKs.
+- Hidden tracking.
+- Telemetry.
+- Crash-report uploads.
+- Mandatory accounts.
+- Mandatory cloud synchronisation.
+- Remote configuration unrelated to enabled providers.
+- Unnecessary background network requests.
+
+All local music functionality must work offline.
+
+Local playlists, play counts, history, settings and metadata should be stored locally.
+
+Online provider integrations must only use the network when the user actively accesses online functionality or an explicitly enabled provider feature requires it.
+
+Do not transmit local music filenames or library contents to external providers without a clear, necessary and user-approved action.
+
+Do not silently scan and upload the user's music library.
+
+Do not upload audio files to external services for recognition.
+
+Provide a clear privacy explanation for every connected provider.
+
+## Two Build Variants
+
+Use separate Android Gradle product flavours.
+
+### Local Edition
+
+- No INTERNET permission in its final merged manifest.
+- Local music library.
+- Full local playback.
+- Playlists.
+- Metadata editor.
+- Audio inspector.
+- Local lyrics.
+- Equalizer where supported.
+- Theme customisation.
+
+### Connected Edition
+
+- All Local Edition functionality.
+- INTERNET permission.
+- Enabled streaming providers.
+- Online discovery.
+- Provider authentication where supported.
+- Download discovery.
+
+The Local Edition must remain independently useful.
+
+The Connected Edition must never break local playback when disconnected.
+
+Do not add unnecessary internet permissions to the Local Edition.
+
+---
+
+# 21. ANDROID TECHNOLOGY
+
+Use native Android technologies.
+
+Preferred implementation:
+
+- Kotlin.
+- Jetpack Compose.
+- AndroidX Media3.
+- ExoPlayer.
+- MediaSessionService.
+- MediaLibraryService where appropriate.
+- Room.
+- DataStore.
+- Kotlin Coroutines.
+- Android Storage Access Framework.
+- Android MediaStore.
+- Android Keystore.
+- Appropriate audio metadata libraries.
+
+Keep business logic separate from UI components.
+
+## Recommended Architecture
+
+Organise the project into modules such as:
+
+### Core
+- Application.
+- Navigation.
+- Design system.
+- Theme engine.
+- Shared models.
+
+### Music Library
+- Media scanning.
+- Local database.
+- Track metadata.
+- Album grouping.
+- Artist grouping.
+- Artwork management.
+
+### Playback
+- ExoPlayer.
+- Media session.
+- Queue.
+- Audio focus.
+- Playback restoration.
+
+### Providers
+- Provider interfaces.
+- Audius adapter.
+- Jamendo adapter.
+- Optional experimental adapter.
+- Spotify external integration.
+
+### Discovery
+- Search.
+- Artists.
+- Albums.
+- Playlists.
+- Recommendations.
+
+### Lyrics
+- Local lyrics.
+- Provider lyrics.
+- Synchronization.
+- LRC parser.
+
+### Download Finder
+- Source discovery.
+- Download permission checks.
+- Quality information.
+- Local import.
+
+### Audio Lab
+- Audio inspection.
+- Equalizer.
+- Effects.
+
+### Persistence
+- Local database.
+- Preferences.
+- History.
+- Custom playlists.
+
+Avoid putting the entire application inside a single Activity or a handful of enormous composables.
+
+---
+
+# 22. PROVIDER INTERFACE AND ISOLATION
+
+Implement a reusable provider interface.
+
+Each provider should expose only its supported features.
+
+For example, a provider may support searching and metadata but not direct streaming or downloading.
+
+Represent these capabilities explicitly.
+
+Suggested conceptual capabilities:
+
+- Search.
+- Track details.
+- Artist details.
+- Album details.
+- Playlist details.
+- Playback.
+- Lyrics.
+- Download links.
+- Direct downloading.
+- User authentication.
+- Playlist management.
+
+Provide consistent error handling.
+
+Handle:
+- Rate limits.
+- Network failures.
+- Expired playback references.
+- Unavailable tracks.
+- Deleted content.
+- Authentication expiration.
+- Unsupported operations.
+
+A failed provider must never affect the local music library.
+
+Do not hardcode expiring streaming URLs into persistent track records.
+
+---
+
+# 23. PERFORMANCE AND RELIABILITY
+
+Optimise for everyday Android devices.
+
+Requirements:
+
+- Fast startup.
+- Efficient music library indexing.
+- Smooth scrolling.
+- Responsive playback controls.
+- Low idle battery consumption.
+- Efficient artwork caching.
+- Controlled background processing.
+- Reliable media-session lifecycle.
+- Queue persistence.
+- Playback resumption.
+- Memory management.
+
+Do not decode unnecessarily large album artworks for small list thumbnails.
+
+Avoid rescanning the complete local library on every launch.
+
+Handle:
+- Missing files.
+- Deleted tracks.
+- Corrupted audio.
+- Unsupported codecs.
+- Network interruptions.
+- Provider outages.
+- Insufficient storage.
+- Interrupted downloads.
+- Expired authorisation.
+
+The player should continue playing a local track even if an online provider becomes unavailable.
+
+---
+
+# 24. GITHUB AND OPEN-SOURCE DISTRIBUTION
+
+Deliver a complete, buildable native Android project.
+
+Do not deliver isolated Kotlin files.
+
+Include:
+
+- Kotlin source code.
+- AndroidManifest.xml.
+- Root Gradle configuration.
+- Module Gradle configuration.
+- settings.gradle.kts.
+- gradle.properties.
+- Gradle wrapper scripts and JAR.
+- Android resources.
+- Local fonts and assets.
+- Database entities.
+- Provider adapters.
+- Dependency declarations.
+- README.md.
+- LICENSE.
+- CHANGELOG.md.
+- GitHub Actions build workflow.
+
+## GitHub Actions
+
+Include:
+
+`.github/workflows/build-apk.yml`
+
+Support:
+
+- Manual workflow execution.
+- Java setup.
+- Android SDK setup.
+- Gradle wrapper execution.
+- Debug APK builds.
+- Unit tests.
+- APK artifact upload.
+
+Support building both Local and Connected editions.
+
+Generate clearly named APK artifacts, such as:
+
+- SoundShelf-Local-debug.apk
+- SoundShelf-Connected-debug.apk
+
+Provide a separate release workflow supporting signing credentials through GitHub Actions Secrets.
+
+Never commit private signing keys.
+
+No Android Studio installation should be required on the developer's Windows computer to obtain APKs through GitHub Actions.
+
+---
+
+# 25. DEVELOPMENT PHASES
+
+Build SoundShelf in stages.
+
+Do not attempt to implement every online provider and advanced feature simultaneously.
+
+## Phase 1 — Project Foundation
+
+- Kotlin Android project.
+- Jetpack Compose.
+- Navigation.
+- Design system.
+- Theme engine foundation.
+- Local database.
+- Local and Connected product flavours.
+- GitHub Actions build support.
+
+## Phase 2 — Local Music Player
+
+- MediaStore scanning.
+- Folder access.
+- Music library.
+- Track information.
+- Album browsing.
+- Artist browsing.
+- Playlists.
+- Queue.
+- ExoPlayer.
+- Background playback.
+- MediaSessionService.
+- Notification controls.
+- Lock-screen controls.
+
+At the end of this phase, SoundShelf must already function as a dependable local music player.
+
+## Phase 3 — Advanced Playback
+
+- Gapless playback.
+- Crossfade.
+- Playback speed.
+- Equalizer.
+- Audio effects.
+- ReplayGain where supported.
+- Artwork caching.
+- Audio metadata editor.
+- Playback restoration.
+
+## Phase 4 — Music Discovery
+
+- Provider architecture.
+- Audius integration.
+- Jamendo integration.
+- Online search.
+- Artist profiles.
+- Album discovery.
+- Playlist discovery.
+- Provider-specific results.
+
+## Phase 5 — Experimental and External Integrations
+
+- YouTube Music compatibility research.
+- Optional experimental provider isolation.
+- Spotify external handoff.
+- Connected Services screen.
+- Provider capability reporting.
+- Authentication where officially supported.
+
+Do not ship unsupported integrations as though they are official or stable.
+
+## Phase 6 — Lyrics
+
+- Embedded lyrics.
+- LRC.
+- Synchronized display.
+- Manual timing adjustment.
+- Licensed provider lyrics where available.
+
+## Phase 7 — Download Finder
+
+- Track identification.
+- Downloadable-source search.
+- Licensing checks.
+- Format availability.
+- Quality information.
+- Authorised downloads.
+- Local import.
+
+## Phase 8 — Visual Experience
+
+- Theme library.
+- Now Playing variations.
+- Home screen customisation.
+- Animations.
+- Artwork presentation.
+- Settings refinement.
+
+## Phase 9 — Reliability
+
+- Performance testing.
+- Battery testing.
+- Background playback testing.
+- Audio interruption testing.
+- Provider failure testing.
+- Offline testing.
+- Library persistence.
+- Permission review.
+
+## Phase 10 — Public Release
+
+- Source code.
+- Documentation.
+- Licence verification.
+- GitHub Actions.
+- APK generation.
+- Installation testing.
+- Release notes.
+
+---
+
+# 26. FINAL ACCEPTANCE TESTS
+
+SoundShelf must not be declared complete simply because its interface looks attractive.
+
+Verify:
+
+### Local Playback
+1. Local music library scanning.
+2. Album and artist grouping.
+3. Folder browsing.
+4. Song playback.
+5. Queue management.
+6. Shuffle and repeat.
+7. Playlist creation.
+8. Playback history.
+9. Metadata editing.
+10. Artwork display.
+
+### Background Playback
+11. Screen-lock playback.
+12. App-background playback.
+13. Notification controls.
+14. Lock-screen controls.
+15. Bluetooth controls.
+16. Audio focus handling.
+17. Playback resumption.
+
+### Online Providers
+18. Provider availability checks.
+19. Track search.
+20. Artist search.
+21. Album discovery.
+22. Playlist discovery.
+23. Playback where permitted.
+24. Correct provider attribution.
+25. Graceful failure handling.
+26. Account disconnection.
+
+### Download Finder
+27. Legitimate source discovery.
+28. Track-version matching.
+29. Format reporting.
+30. Quality reporting.
+31. Download authorisation checks.
+32. Local file import.
+
+### User Experience
+33. Theme selection.
+34. Theme persistence.
+35. Now Playing screen.
+36. Lyrics.
+37. Audio settings.
+38. Search.
+39. Queue restoration.
+40. Overall interface responsiveness.
+
+### Privacy
+41. Local Edition works without internet.
+42. Local Edition has no INTERNET permission in its merged manifest.
+43. No analytics or advertising SDKs.
+44. Connected Edition only accesses enabled providers when required.
+45. No third-party credentials collected insecurely.
+46. No unauthorised content downloads.
+47. No unnecessary background network activity.
+
+### Distribution
+48. Complete source project.
+49. Successful Gradle build.
+50. Successful GitHub Actions APK generation.
+51. Both APK variants install and launch correctly.
+
+Do not claim unsupported functionality as implemented.
+
+Maintain an accurate implementation-status report.
+
+---
+
+# FINAL PRODUCT VISION
+
+**SoundShelf — Your Music. Your Library. Your Experience.**
+
+Build a beautiful, fully featured native Android music player combining local music, online music discovery, authorised streaming integrations, advanced playback, lyrics, playlists and legitimate download discovery.
+
+Users should be able to:
+
+- Open the application and immediately play local music.
+- Discover new music online.
+- Search artists, albums and songs.
+- Connect compatible music services.
+- Use supported streaming providers.
+- Build playlists.
+- Read synchronized lyrics.
+- Inspect audio quality.
+- Manage local music metadata.
+- Find legitimate downloadable versions of recordings.
+- Enjoy a sophisticated Now Playing experience.
+- Personalise the application's visual identity.
+
+Local playback must never depend on an online provider.
+
+Streaming providers must remain modular and independently replaceable.
+
+The application must be honest about provider restrictions, content licences, download rights and authentication capabilities.
+
+No SoundShelf advertisements.
+No trackers.
+No mandatory account.
+No unnecessary cloud services.
+No forced subscription.
+No bloated interface.
+
+Build a complete Android application with a genuinely excellent local music experience and an expandable online music ecosystem.
+
+**The local music player is the foundation. The streaming ecosystem is the extension. The listening experience is the product.**

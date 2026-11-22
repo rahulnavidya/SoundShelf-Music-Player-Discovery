@@ -1,0 +1,8 @@
+{
+  "name": "SoundShelf",
+  "description": "Premium native Android music player combining an offline-first local music library, Media3 background playback, synchronized lyrics studio, audio quality inspector, download discovery, and curated visual themes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
